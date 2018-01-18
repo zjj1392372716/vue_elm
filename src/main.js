@@ -3,11 +3,11 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import './common/stylus/reset.styl'// 重置样式文件
+import './common/stylus/reset.css'// 重置样式文件
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-import './common/styles/base.styl'
-import './common/styles/mixin.styl'
+import './common/stylus/base.styl'
+import './common/stylus/mixin.styl'
 import './common/stylus/font.styl'
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
