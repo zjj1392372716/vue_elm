@@ -17,34 +17,34 @@
           :goods="goods"
           :pulldown="pulldown"
           @pulldown="loadData">
-          <ul> 
-            <li v-for="item in goods" class="goods-list food-list-hook">
-                <h1 class="goods-title">{{item.name}}</h1>
-                <ul>
-                    <li v-for="food in item.foods" class="food-item boder-1">
-                        <div class="icon">
-                            <img :src="food.icon" alt="">
+      <ul> 
+        <li v-for="item in goods" class="goods-list food-list-hook">
+            <h1 class="goods-title">{{item.name}}</h1>
+            <ul>
+                <li v-for="food in item.foods" class="food-item boder-1">
+                    <div class="icon">
+                        <img :src="food.icon" alt="">
+                    </div>
+                    <div class="content">
+                        <h2 class="name">{{food.name}}</h2>
+                        <p class="desc">{{food.description}}</p>
+                        <div class="extra">
+                            <span>月售{{food.sellCount}}</span>
+                            <span>好评率{{food.rating}}%</span>
                         </div>
-                        <div class="content">
-                            <h2 class="name">{{food.name}}</h2>
-                            <p class="desc">{{food.description}}</p>
-                            <div class="extra">
-                                <span>月售{{food.sellCount}}</span>
-                                <span>好评率{{food.rating}}%</span>
-                            </div>
-                            <div class="price">
-                                <span class="price-now">￥ {{food.price}}</span>
-                                <span class="price-old" v-show="food.oldPrice" >￥{{food.oldPrice}}</span>
-                            </div>
-                            <!-- <div class="cart">
-                                <cartControl :food="food"></cartControl>
-                            </div> -->
+                        <div class="price">
+                            <span class="price-now">￥ {{food.price}}</span>
+                            <span class="price-old" v-show="food.oldPrice" >￥{{food.oldPrice}}</span>
                         </div>
-                    </li>
-                </ul>
-            </li>
-          </ul>
-      </scroll>
+                        <!-- <div class="cart">
+                            <cartControl :food="food"></cartControl>
+                        </div> -->
+                    </div>
+                </li>
+            </ul>
+        </li>
+      </ul>
+    </scroll>
   </div>
 </template>
 <script>

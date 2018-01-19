@@ -1,50 +1,54 @@
 <template>
-  <div class="shopcar">  
-      <div class="content" @click="togglelist">
-          <div class="content-left">
-              <div class="logo-wrapper">
-                  <div class="logo" :class="{'heightLight':totalCount>0}">
-                      <i class="icon-shopping_cart" :class="{'heightLight':totalCount>0}"></i>
-                  </div>
-                  <div class="num" v-show="totalCount>0">
-                      {{totalCount}}
-                  </div>
+  <div>
+    <div class="shopcar">  
+        <div class="content" @click="togglelist">
+            <div class="content-left">
+                <div class="logo-wrapper">
+                    <div class="logo" :class="{'heightLight':totalCount>0}">
+                        <i class="icon-shopping_cart" :class="{'heightLight':totalCount>0}"></i>
+                    </div>
+                    <div class="num" v-show="totalCount>0">
+                        {{totalCount}}
+                    </div>
+                </div>
+                <div class="prices" :class="{'heightLight':totalCount>0}">￥ {{totalPrices}}</div>
+                <div class="desc">另配送费￥{{prices}}元</div>
+            </div> 
+            <div class="content-right">
+              <div class="pay" :class="payclass" @click.stop="pay">
+                {{payTotal}}
               </div>
-              <div class="prices" :class="{'heightLight':totalCount>0}">￥ {{totalPrices}}</div>
-              <div class="desc">另配送费￥{{prices}}元</div>
-          </div> 
-          <div class="content-right">
-            <div class="pay" :class="payclass">
-              {{payTotal}}
-            </div>
-          </div>
-      </div>
-      <transition name="fade">
-        <div class="list-wrapper" v-show="listshow"> 
-            <div class="list-header">
-                <h1 class="title">购物车</h1>
-                <span class="empty">清空</span>
-            </div>
-            <div class="list-content">
-                <ul>
-                    <li class="foods" v-for="item in selectFoods">
-                        <span class="name">{{item.name}}</span>
-                        <div class="prices">
-                            <span class="price">￥{{item.price*item.count}}</span>
-                        </div>
-                        <div class="cartcontrol-wrap">
-                            <CartControl :food="item"></CartControl>
-                        </div>
-                    </li>
-                </ul>
             </div>
         </div>
-      </transition>
+        <transition name="fade">
+          <div class="list-wrapper" v-show="listshow"> 
+              <div class="list-header">
+                  <h1 class="title">购物车</h1>
+                  <span class="empty" @click="empty">清空</span>
+              </div>
+              <div class="list-content" ref="list">
+                  <ul>
+                      <li class="foods" v-for="item in selectFoods">
+                          <span class="name">{{item.name}}</span>
+                          <div class="prices">
+                              <span class="price">￥{{item.price*item.count}}</span>
+                          </div>
+                          <div class="cartcontrol-wrap">
+                              <CartControl :food="item"></CartControl>
+                          </div>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+        </transition>
+    </div>
+    <div class="list-mask" @click="hideList" v-show="listshow"></div>
   </div>
 </template>
 
 <script>
 import CartControl from '../../components/cartcontrol/cartcontrol.vue'
+import BScroll from 'better-scroll'
 export default {
   data() {
     return {
@@ -108,6 +112,18 @@ export default {
         return false;
       }
       let show = !this.fold;
+      if (show){
+        this.$nextTick(()=>{
+          if(!this.scroll){
+            this.scroll = new BScroll(this.$refs.list, {
+              click: true
+            })
+          }else{
+            this.scroll.refresh()
+          }
+          
+        }) 
+      }
       return show;
     }
   },
@@ -125,12 +141,30 @@ export default {
       //否者就交替出现消失
       this.fold = !this.fold;
       console.log(this.fold);
+    },
+    empty: function(){
+      console.log(1)
+      this.selectFoods.forEach(function(food){
+        food.count = 0
+      })
+    },
+    hideList: function() {
+      this.fold = true;
+    },
+    pay: function() {
+      if (this.totalPrices > this.minPrice ){
+        window.alert('请支付');
+      }else{
+        return 
+      }
+     
     }
   }
 }
 </script>
 
 <style lang="stylus">
+@import '../../common/stylus/mixin.styl'
 .shopcar
     height:48px
     width:100%
@@ -235,38 +269,64 @@ export default {
         top:0
         background :#fff
         z-index:-1
-        &.fade-leave
-          transform: translate3d(0,-100%,0) 
-        &.fade-leave-active
+        transform: translate3d(0, -100%, 0) 
+        &.fade-leave-active,&.fade-enter-active
+          transition: all 0.5s
+        &.fade-enter,&.fade-leave-active
           transform: translate3d(0,0,0)
-          transition: all 2s ease
-        &.fade-enter-active
-          transition: all 1s ease
-          transform: translate3d(0,-100%,0) 
-        &.fade-enter
-          transform: translate3d(0,0,0)
-        // .list-header
-        //     height 40px
-        //     line-height:40px
-        //     padding:0px 18px
-        //     background: #f3f5f7
-
-        //     border-bottom:1px solid rgba(7,17,27,0.1)
-        //     .title
-        //         float:left
-        //         font size 14px
-        //         color:rgb(7,17,27)
-        //     .empty
-        //         float:right
-        //         font size 12px
-        //         color:rgb(0,160,220)
-        // .list-content
-        //     padding:0px 18px
-        //     max-height:217px
-        //     background: #ffffff
-        //     overflow hidden
-
-
+        .list-header
+            height 40px
+            line-height:40px
+            padding:0px 18px
+            background: #f3f5f7
+            border-bottom:1px solid rgba(7,17,27,0.1)
+            .title
+                float:left
+                font size 14px
+                color:rgb(7,17,27)
+            .empty
+                float:right
+                font size 12px
+                color:rgb(0,160,220)
+        .list-content
+            padding:0px 18px
+            max-height:217px
+            background: #ffffff
+            overflow hidden
+            .foods
+              padding: 12px 0px
+              position relative
+              box-sizing :border-box
+              height:auto
+              border-1px(rgba(7,17,27,0.1))
+              .name
+                display :inline-block
+                line-height :24px
+                font-size: 14px
+                color: rgb(7,17,27)
+              .prices
+                display :inline-block
+                line-height :24px
+                font-size:14px
+                color:red
+                font-weight:700
+                margin-right:6px
+                position :absolute
+                right: 110px
+              .cartcontrol-wrap
+                display :inline-block
+                float:right
+                position :relative
+                top: -6px
+.list-mask
+  position :fixed
+  top:0px 
+  left:0px 
+  background :rgba(7,17,27,0.4)
+  z-index:40
+  width:100%
+  height:100%
+  backdrop-filter: blur(10px)
 
 
 

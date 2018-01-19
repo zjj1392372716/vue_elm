@@ -14,7 +14,7 @@
             <li v-for="item in goods" class="goods-list food-list-hook">
                 <h1 class="goods-title">{{item.name}}</h1>
                 <ul>
-                    <li v-for="food in item.foods" class="food-item boder-1">
+                    <li v-for="food in item.foods" class="food-item boder-1" @click="clickfood( food, $event )">
                         <div class="icon">
                             <img :src="food.icon" alt="">
                         </div>
@@ -39,13 +39,14 @@
           </ul>
       </div>
       <shopcar :selectFoods="selectFoods" :minPrice="seller.minPrice" :prices="seller.deliveryPrice"></shopcar>
+      <Food :food="clickFood" ref="food"></Food>
   </div>
 </template>
 <script>
 import Bscroll from 'better-scroll'
 import Shopcar from '../../components/shopcar/shopcar.vue'
 import CartControl from '../../components/cartcontrol/cartcontrol.vue'
-
+import Food from '../food/food'
     export default{
         props:{
             seller:{
@@ -58,12 +59,14 @@ import CartControl from '../../components/cartcontrol/cartcontrol.vue'
 
                 },
                 listHeight:[],
-                scrollY:0
+                scrollY:0,
+                clickFood: {}           //点击的食物
             }
         },
         components:{
             Shopcar,
-            CartControl
+            CartControl,
+            Food
         },
         computed:{
             currentIndex:function() {
@@ -134,6 +137,7 @@ import CartControl from '../../components/cartcontrol/cartcontrol.vue'
                 } 
             },
             selectMenu:function(index,event){
+                
                 if(!event._constructed)
                 {
                     return ;
@@ -143,6 +147,14 @@ import CartControl from '../../components/cartcontrol/cartcontrol.vue'
                 this.foodScroll.scrollToElement(el,1000); 
                 let children = this.$refs.menus.getElementsByClassName('menu-item');
                 // children[index].siblings.removeClass('current')
+            },
+            clickfood: function(food , event) {
+                if(!event._constructed)
+                {
+                    return ;
+                }
+                this.clickFood = food;
+                this.$refs.food.show()
             }
         }
 
