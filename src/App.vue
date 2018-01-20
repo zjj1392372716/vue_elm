@@ -15,13 +15,15 @@
         <router-link to="/seller" class="a">商家</router-link>
       </div>
     </div>
-    <router-view :seller="seller"></router-view>
+    <keep-alive>
+      <router-view :seller="seller"></router-view>
+    </keep-alive>
   </div>
 </template>
 
 <script>
 import mheader from "./components/header/header.vue";
-
+import {urlParse} from './common/js/util.js'
 export default {
   name: 'app',
   components:{
@@ -29,7 +31,13 @@ export default {
   },
   data() {
     return {
-      seller:{}
+      seller: {
+          id: (() => {
+            let queryParam = urlParse();
+            console.log(queryParam)
+            return queryParam.id;
+          })()
+        }
     }
   },
   created() {
